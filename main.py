@@ -79,7 +79,7 @@ async def create_item(item: ItemCreate):
         is_available=item.is_available,
         created_at=datetime.now()
     )
-    items_db.append(new_item.dict())
+    items_db.append(new_item.model_dump())
     return new_item
 
 # Update item
@@ -90,7 +90,7 @@ async def update_item(item_id: str, item_update: ItemUpdate):
         raise HTTPException(status_code=404, detail="Item not found")
     
     # Update only provided fields
-    for field, value in item_update.dict(exclude_unset=True).items():
+    for field, value in item_update.model_dump(exclude_unset=True).items():
         items_db[item_index][field] = value
     
     return items_db[item_index]

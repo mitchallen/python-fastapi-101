@@ -100,10 +100,14 @@ stop:
 		echo "No FastAPI processes found on port 8000."; \
 	fi
 
-# Run tests (placeholder for future implementation)
+# Run tests
 test:
 	@echo "Running tests..."
-	@echo "No tests implemented yet. Add your test files and update this target."
+	@if [ ! -d "venv" ]; then \
+		echo "Virtual environment not found. Running 'make setup' first..."; \
+		$(MAKE) setup; \
+	fi
+	./venv/bin/pytest test_main.py -v
 
 # Clean up generated files and virtual environment
 clean:
