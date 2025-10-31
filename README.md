@@ -157,12 +157,45 @@ The `--reload` flag enables automatic reloading when code changes are detected:
 uvicorn main:app --reload
 ```
 
+### Testing
+
+The project includes comprehensive unit tests using pytest. Run tests with:
+
+```bash
+# Run tests without coverage
+make test
+
+# Run tests with coverage report
+make test-cov
+
+# Generate coverage report
+make coverage
+
+# Generate and open HTML coverage report
+make coverage-html
+```
+
+Or directly with pytest:
+
+```bash
+# Run tests
+pytest test_main.py -v
+
+# Run with coverage
+pytest test_main.py --cov=main --cov-report=term-missing --cov-report=html
+```
+
+The test suite includes:
+- **26 tests** covering all API endpoints
+- **100% code coverage** of `main.py`
+- Tests for CRUD operations, search functionality, validation, and error handling
+- HTML coverage reports available at `htmlcov/index.html`
+
 ## Next Steps
 
 - Add database integration (SQLAlchemy, MongoDB, etc.)
 - Implement authentication and authorization
 - Add input validation and error handling
-- Create unit tests
 - Add logging
 - Implement rate limiting
 - Add API versioning

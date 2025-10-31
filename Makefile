@@ -1,6 +1,6 @@
 # FastAPI Demo Project Makefile
 
-.PHONY: help install run dev test clean setup up stop
+.PHONY: help install run dev test test-cov coverage coverage-report coverage-html clean setup up stop
 
 # Default target - show help
 help:
@@ -12,7 +12,10 @@ help:
 	@echo "  make run       - Run the FastAPI application"
 	@echo "  make dev       - Run the application in development mode with auto-reload"
 	@echo "  make stop      - Stop any running FastAPI processes on port 8000"
-	@echo "  make test      - Run tests (placeholder for future test implementation)"
+	@echo "  make test      - Run tests without coverage"
+	@echo "  make test-cov  - Run tests with coverage report"
+	@echo "  make coverage  - Generate and display coverage report"
+	@echo "  make coverage-html - Generate HTML coverage report and open it"
 	@echo "  make clean     - Clean up generated files and virtual environment"
 	@echo "  make help      - Show this help message"
 	@echo ""
@@ -100,7 +103,7 @@ stop:
 		echo "No FastAPI processes found on port 8000."; \
 	fi
 
-# Run tests
+# Run tests without coverage
 test:
 	@echo "Running tests..."
 	@if [ ! -d "venv" ]; then \
@@ -109,12 +112,56 @@ test:
 	fi
 	./venv/bin/pytest test_main.py -v
 
+# Run tests with coverage
+test-cov:
+	@echo "Running tests with coverage..."
+	@if [ ! -d "venv" ]; then \
+		echo "Virtual environment not found. Running 'make setup' first..."; \
+		$(MAKE) setup; \
+	fi
+	./venv/bin/pytest test_main.py -v --cov=main --cov-report=term-missing --cov-report=html
+
+# Generate coverage report
+coverage:
+	@echo "Generating coverage report..."
+	@if [ ! -d "venv" ]; then \
+		echo "Virtual environment not found. Running 'make setup' first..."; \
+		$(MAKE) setup; \
+	fi
+	./venv/bin/pytest test_main.py --cov=main --cov-report=term-missing --cov-report=html
+	@echo ""
+	@echo "Coverage report generated!"
+	@echo "Terminal report shown above."
+	@echo "HTML report available at: htmlcov/index.html"
+
+# Generate and open HTML coverage report
+coverage-html:
+	@echo "Generating HTML coverage report..."
+	@if [ ! -d "venv" ]; then \
+		echo "Virtual environment not found. Running 'make setup' first..."; \
+		$(MAKE) setup; \
+	fi
+	./venv/bin/pytest test_main.py --cov=main --cov-report=html --cov-report=term
+	@echo ""
+	@echo "Opening HTML coverage report..."
+	@if command -v open >/dev/null 2>&1; then \
+		open htmlcov/index.html; \
+	elif command -v xdg-open >/dev/null 2>&1; then \
+		xdg-open htmlcov/index.html; \
+	else \
+		echo "HTML report generated at: htmlcov/index.html"; \
+		echo "Please open it manually in your browser."; \
+	fi
+
 # Clean up generated files and virtual environment
 clean:
 	@echo "Cleaning up..."
 	rm -rf venv/
 	rm -rf __pycache__/
 	rm -rf .pytest_cache/
+	rm -rf htmlcov/
+	rm -rf .coverage
+	rm -rf coverage.xml
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name "__pycache__" -delete
 	@echo "Cleanup complete!"
